@@ -6,8 +6,6 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const User = require("./User");
 
-// add tasks
-
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
@@ -27,14 +25,73 @@ mongoose
     console.error(`MongoDB connection error: ${err}`);
   });
 
-app.post("/register", async (req, res) => {
+app.get("/users/:id/tasks", (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ tasks: user.tasks });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: `Get tasks error: ${err}` });
+    });
+});
+
+app.post("/users/:id/task", (req, res) => {
+  const { title, description, due } = req.body;
+
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const newTask = { title, description, due };
+      user.tasks.push(newTask);
+      return user.save();
+    })
+    .then(() => res.status(201).json({ message: "Task added successfully" }))
+    .catch((err) => res.status(500).json({ error: `Task add error: ${err}` }));
+});
+
+app.put("/users/:userId/tasks/:taskId", (req, res) => {
+  User.updateOne(
+    { _id: req.params.userId, "tasks._id": req.params.taskId },
+    { $set: { "tasks.$": req.body } }
+  )
+    .then((result) => {
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json({ message: "Task updated successfully" });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: `Task update error ${err}` });
+    });
+});
+
+app.delete("/users/:userId/tasks/:taskId", (req, res) => {
+  User.updateOne(
+    { _id: req.params.userId }, // Find the user by ID
+    { $pull: { tasks: { _id: req.params.taskId } } } // Remove the task with a specific taskId
+  )
+    .then((result) => {
+      if (result.modifiedCount === 0) {
+        return res.status(404).json({ message: "Task not found" });
+      }
+      res.json({ message: "Task deleted successfully" });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: `Task delete error: ${err}` });
+    });
+});
+
+app.post("/register", (req, res) => {
   const { username, password } = req.body;
 
-  const hashedPassword = await bcrypt
-    .genSalt(10)
-    .then((salt) => bcrypt.hash(password, salt));
-
-  new User({ username, password: hashedPassword })
+  new User({ username, password })
     .save()
     .then(() => {
       return res.status(201).json({ message: "User registered" });

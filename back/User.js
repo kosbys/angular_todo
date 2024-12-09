@@ -14,9 +14,16 @@ const UserSchema = new mongoose.Schema({
   tasks: { type: [TaskSchema], default: [] },
 });
 
-UserSchema.methods.comparePasswords = (password) => {
+UserSchema.methods.comparePasswords = function (password) {
   return bcrypt.compare(password, this.password);
 };
+
+UserSchema.pre("save", async function (next) {
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+  next();
+});
 
 const User = mongoose.model("user", UserSchema);
 
