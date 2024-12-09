@@ -74,8 +74,8 @@ app.put("/users/:userId/tasks/:taskId", (req, res) => {
 
 app.delete("/users/:userId/tasks/:taskId", (req, res) => {
   User.updateOne(
-    { _id: req.params.userId }, // Find the user by ID
-    { $pull: { tasks: { _id: req.params.taskId } } } // Remove the task with a specific taskId
+    { _id: req.params.userId },
+    { $pull: { tasks: { _id: req.params.taskId } } }
   )
     .then((result) => {
       if (result.modifiedCount === 0) {
