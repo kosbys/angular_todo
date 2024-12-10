@@ -11,7 +11,7 @@ import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, RouterLink, NgIf],
+  imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
@@ -32,7 +32,6 @@ export class LoginComponent {
   login() {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      console.log(username, password);
 
       this.api.login(username, password).subscribe({
         next: (res) => {

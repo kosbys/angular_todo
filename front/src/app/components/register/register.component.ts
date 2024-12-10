@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
 
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { TaskService } from '../../api.service';
@@ -11,22 +17,35 @@ import { TaskService } from '../../api.service';
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
-  username: string = '';
-  password: string = '';
+  registerForm: FormGroup;
+  errorMessage: string = '';
 
-  constructor(private api: TaskService, private router: Router) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private api: TaskService,
+    private router: Router
+  ) {
+    this.registerForm = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+  }
 
   register() {
-    this.api.register(this.username, this.password).subscribe({
-      next: () => {
-        // this.snackBar.open('Registration success', 'Close', { duration: 6000 });
-        this.router.navigate(['/login']);
-      },
-      error: (error) => {
-        // this.snackBar.open(`Register fail: ${error}`, 'Close', {
-        //   duration: 6000,
-        // });
-      },
-    });
+    if (this.registerForm.valid) {
+      const { username, password } = this.registerForm.value;
+
+      this.api.register(username, password).subscribe({
+        next: () => {
+          this.router.navigate(['/tasks']);
+        },
+        error: (error) => {
+          console.log(error.error.error);
+          this.errorMessage = error.error.error;
+        },
+      });
+    } else {
+      this.errorMessage = 'Do not leave any empty fields';
+    }
   }
 }
