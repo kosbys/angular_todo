@@ -1,28 +1,51 @@
 import { Component } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TaskService } from '../../api.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgIf],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {
-  username: string = '';
-  password: string = '';
+  loginForm: FormGroup;
+  errorMessage: string = '';
 
-  constructor(private api: TaskService, private router: Router) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    private api: TaskService,
+    private router: Router
+  ) {
+    this.loginForm = this.formBuilder.group({
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
+    });
+  }
 
   login() {
-    this.api.login(this.username, this.password).subscribe({
-      next: (res) => {
-        localStorage.setItem('token', res.token);
-        this.router.navigate(['/tasks']);
-      },
-      error: (error) => {
-        // this.snackBar.open(`Error: ${error}`, 'Close', { duration: 6000 });
-      },
-    });
+    if (this.loginForm.valid) {
+      const { username, password } = this.loginForm.value;
+      console.log(username, password);
+
+      this.api.login(username, password).subscribe({
+        next: (res) => {
+          localStorage.setItem('token', res.token);
+          this.router.navigate(['/tasks']);
+        },
+        error: (error) => {
+          console.log(error.error.error);
+          this.errorMessage = error.error.error;
+        },
+      });
+    } else {
+      this.errorMessage = 'Do not leave any empty fields';
+    }
   }
 }

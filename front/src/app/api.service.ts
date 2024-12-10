@@ -3,6 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 
+type userJwt = {
+  user_id: string;
+  username: string;
+  iat: number;
+  exp: number;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,13 +30,13 @@ export class TaskService {
     return this.http.get(`${this.apiUrl}/users/${userId}/tasks`);
   }
 
-  addTask(userId: string, task: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users/${userId}/task`, task);
+  addTask(user: userJwt, task: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${user.user_id}/task`, task);
   }
 
-  updateTask(userId: string, taskId: string, task: any): Observable<any> {
+  updateTask(user: userJwt, taskId: string, task: any): Observable<any> {
     return this.http.put(
-      `${this.apiUrl}/users/${userId}/tasks/${taskId}`,
+      `${this.apiUrl}/users/${user.user_id}/tasks/${taskId}`,
       task
     );
   }

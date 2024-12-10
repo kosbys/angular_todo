@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { TaskService } from '../../api.service';
-import { jwtDecode } from 'jwt-decode';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
+
+interface userJwtPayload extends JwtPayload {
+  user_id: string;
+}
 
 @Component({
   selector: 'app-tasks',
@@ -9,6 +14,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './tasks.component.html',
 })
 export class TasksComponent implements OnInit {
+  private jwt_secret = environment.jwt_secret;
   userId: string | null = null;
   tasks: any[] = [];
 
@@ -20,9 +26,13 @@ export class TasksComponent implements OnInit {
   }
 
   decodeJwt() {
-    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+    const token = localStorage.getItem('token');
 
-    this.userId = jwtDecode(token!);
+    if (token) {
+      const decoded = jwt.verify(token, this.jwt_secret) as userJwtPayload;
+
+      this.userId = decoded.user_id;
+    }
   }
 
   fetchTasks() {
