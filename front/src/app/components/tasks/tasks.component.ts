@@ -1,20 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { TaskService } from '../../api.service';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
+import flatpickr from 'flatpickr';
 
 @Component({
   selector: 'app-tasks',
   imports: [CommonModule],
   templateUrl: './tasks.component.html',
 })
-export class TasksComponent implements OnInit {
+export class TasksComponent implements OnInit, AfterViewInit {
   private jwt_secret = environment.jwt_secret;
   userId: string | null = null;
   tasks: any[] = [];
 
   constructor(private api: TaskService, private jwtHelper: JwtHelperService) {}
+  ngAfterViewInit(): void {
+    flatpickr('#datepicker', {
+      dateFormat: 'Y-m-d',
+    });
+  }
 
   ngOnInit(): void {
     this.decodeJwt();
