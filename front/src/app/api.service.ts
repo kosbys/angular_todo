@@ -3,13 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { Observable } from 'rxjs';
 
-type userJwt = {
-  user_id: string;
-  username: string;
-  iat: number;
-  exp: number;
-};
-
 @Injectable({
   providedIn: 'root',
 })
