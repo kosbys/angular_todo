@@ -39,6 +39,22 @@ app.get("/users/:id/tasks", (req, res) => {
     });
 });
 
+app.get("/users/:id/:taskId", (req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+      }
+
+      const task = user.tasks.id(req.params.taskId);
+
+      res.json({ task });
+    })
+    .catch((err) => {
+      res.status(500).json({ message: `Get tasks error: ${err}` });
+    });
+});
+
 app.post("/users/:id/task", (req, res) => {
   const { title, description, due } = req.body;
 

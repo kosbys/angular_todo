@@ -1,11 +1,19 @@
 <div class="flex flex-col pt-14 gap-8 place-items-center w-screen">
   <form
+    [formGroup]="taskForm"
+    (ngSubmit)="addTask()"
     class="rounded-lg shadow-2xl flex flex-col gap-2 place-items-start py-4 px-12 bg-neutral"
   >
     <h1 class="text-2xl place-self-center font-bold text-neutral-content">
       Add Task
     </h1>
-    <label class="w-full input input-bordered input-sm flex items-center gap-2">
+    <label
+      [ngClass]="{
+        'input-error': taskForm.get('title')?.invalid,
+        'input-success': taskForm.get('title')?.valid
+      }"
+      class="w-full input input-bordered input-sm flex items-center gap-2"
+    >
       Title
       <input
         formControlName="title"
@@ -15,7 +23,13 @@
         placeholder="Type here"
       />
     </label>
-    <label class="w-full input input-bordered input-sm flex items-center gap-2">
+    <label
+      [ngClass]="{
+        'input-error': taskForm.get('description')?.invalid,
+        'input-success': taskForm.get('description')?.valid
+      }"
+      class="w-full input input-bordered input-sm flex items-center gap-2"
+    >
       Description
       <input
         formControlName="description"
@@ -24,7 +38,13 @@
         placeholder="Type here"
       />
     </label>
-    <label class="w-full input input-bordered input-sm flex items-center gap-2">
+    <label
+      [ngClass]="{
+        'input-error': taskForm.get('due')?.invalid,
+        'input-success': taskForm.get('due')?.valid
+      }"
+      class="w-full input input-bordered input-sm flex items-center gap-2"
+    >
       Due Date
       <input
         formControlName="due"
@@ -33,7 +53,10 @@
         placeholder="Select a date"
       />
     </label>
-    <button class="w-full btn mt-2 btn-sm max-w-xs bg-neutral-content">
+    <button
+      type="submit"
+      class="w-full btn mt-2 btn-sm max-w-xs bg-neutral-content"
+    >
       Add
     </button>
   </form>
@@ -51,26 +74,32 @@
           <th class="text-center">Actions</th>
         </tr>
       </thead>
+      <!-- body -->
       <tbody>
-        <tr>
+        <tr *ngFor="let task of tasks">
           <td>
             <div>
-              <div class="font-bold">Go eat</div>
+              <div class="font-bold">{{ task.title }}</div>
             </div>
           </td>
-          <td>Eat at a very fancy restaurant</td>
-          <td>2024-12-10</td>
-          <td class="text-danger">No</td>
+          <td class="text-center">{{ task.description }}</td>
+          <td>{{ task.due | date : "yyyy-MM-dd" }}</td>
+          <td class="text-center">
+            {{ task.done ? "✅" : "❌" }}
+          </td>
           <td>
             <div class="join">
-              <button class="btn btn-outline btn-error join-item">
+              <button
+                class="btn btn-outline btn-error join-item"
+                (click)="deleteTask(task._id)"
+              >
                 Delete
               </button>
-              <button class="btn btn-outline btn-warning join-item">
+              <button
+                class="btn btn-outline btn-warning join-item"
+                (click)="openEditModal(task._id)"
+              >
                 Edit
-              </button>
-              <button class="btn btn-outline btn-success join-item">
-                Complete
               </button>
             </div>
           </td>
@@ -78,4 +107,64 @@
       </tbody>
     </table>
   </div>
+
+  <dialog id="edit-task-dialog" class="modal">
+    <div class="modal-box pb-52 bg-neutral">
+      <h3 class="font-bold text-lg text-neutral-content">Edit Task</h3>
+      <form
+        [formGroup]="editTaskForm"
+        (ngSubmit)="editTask(taskEditId!)"
+        class="flex flex-col p-8 gap-8"
+      >
+        <label
+          class="w-full input input-bordered input-sm flex items-center gap-2"
+        >
+          Title
+          <input
+            formControlName="title"
+            id="titleEdit"
+            type="text"
+            class="grow"
+            placeholder="Type here"
+          />
+        </label>
+        <label
+          class="w-full input input-bordered input-sm flex items-center gap-2"
+        >
+          Description
+          <input
+            formControlName="description"
+            id="descriptionEdit"
+            type="text"
+            placeholder="Type here"
+          />
+        </label>
+        <label
+          class="w-full input input-bordered input-sm flex items-center gap-2"
+        >
+          Due Date
+          <input
+            formControlName="due"
+            id="datepickerEdit"
+            type="date"
+            placeholder="Select a date"
+          />
+        </label>
+        <div class="flex flex-row gap-8">
+          <h3 class="text-neutral-content">Done?</h3>
+          <input
+            formControlName="done"
+            id="done"
+            type="checkbox"
+            class="checkbox bg-neutral-content"
+          />
+        </div>
+      </form>
+      <div class="modal-action">
+        <button class="btn btn-primary" (click)="editTask(taskEditId!)">
+          Save
+        </button>
+      </div>
+    </div>
+  </dialog>
 </div>

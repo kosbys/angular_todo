@@ -30,15 +30,16 @@ export class TaskService {
     return this.http.get(`${this.apiUrl}/users/${userId}/tasks`);
   }
 
-  addTask(user: userJwt, task: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/users/${user.user_id}/task`, task);
+  getTask(userId: string, taskId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/users/${userId}/${taskId}`);
   }
 
-  updateTask(user: userJwt, taskId: string, task: any): Observable<any> {
-    return this.http.put(
-      `${this.apiUrl}/users/${user.user_id}/tasks/${taskId}`,
-      task
-    );
+  addTask(user: string, task: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/${user}/task`, task);
+  }
+
+  updateTask(user: string, taskId: string, task: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/users/${user}/tasks/${taskId}`, task);
   }
 
   deleteTask(userId: string, taskId: string): Observable<any> {
