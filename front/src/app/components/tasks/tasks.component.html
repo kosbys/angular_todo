@@ -53,10 +53,7 @@
         placeholder="Select a date"
       />
     </label>
-    <button
-      type="submit"
-      class="w-full btn mt-2 btn-sm max-w-xs bg-neutral-content"
-    >
+    <button type="submit" class="w-full btn btn-accent mt-2 btn-sm max-w-xs">
       Add
     </button>
   </form>
@@ -85,7 +82,7 @@
           <td class="text-center">{{ task.description }}</td>
           <td>{{ task.due | date : "yyyy-MM-dd" }}</td>
           <td class="text-center">
-            {{ task.done ? "✅" : "❌" }}
+            {{ task.done ? "✔️" : "❌" }}
           </td>
           <td>
             <div class="join">
@@ -150,14 +147,15 @@
             placeholder="Select a date"
           />
         </label>
-        <div class="flex flex-row gap-8">
-          <h3 class="text-neutral-content">Done?</h3>
-          <input
-            formControlName="done"
-            id="done"
-            type="checkbox"
-            class="checkbox bg-neutral-content"
-          />
+        <div class="flex flex-row gap-8 self-end">
+          <label class="label cursor-pointer" for="done">
+            <span class="label-text pr-4">Done</span>
+            <input
+              formControlName="done"
+              id="done"
+              type="checkbox"
+              class="toggle toggle-primary bg-neutral-content"
+          /></label>
         </div>
       </form>
       <div class="modal-action">

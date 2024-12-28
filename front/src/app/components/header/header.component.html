@@ -1,10 +1,10 @@
-<header class="navbar flex px-12 flex-row justify-between bg-base-neutral">
-  <h2>{{ user ? user.username : "Not logged in" }}</h2>
+<header class="navbar flex px-12 flex-row justify-evenly bg-neutral">
+  <h2 *ngIf="user">Hello {{ user.username }}</h2>
 
   <button
     *ngIf="user"
     (click)="logout()"
-    class="btn btn-error text-xl self-end"
+    class="btn btn-error text-xl text-neutral-content"
   >
     Logout
   </button>
