@@ -1,16 +1,14 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { appRoutes } from './app.routes';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterModule],
+  imports: [RouterModule, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'My Todo App';
-
   constructor(private router: Router) {}
 
   navigateToLogin() {

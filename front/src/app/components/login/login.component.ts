@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TaskService } from '../../api.service';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-login',

@@ -37,7 +37,7 @@ export class RegisterComponent {
 
       this.api.register(username, password).subscribe({
         next: () => {
-          this.router.navigate(['/tasks']);
+          this.router.navigate(['/login']);
         },
         error: (error) => {
           console.log(error.error.error);
