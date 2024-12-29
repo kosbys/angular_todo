@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnChanges, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { jwtDecode } from 'jwt-decode';
 
 type User = { user_id: string; username: string } | null;
@@ -14,7 +15,7 @@ type User = { user_id: string; username: string } | null;
 export class HeaderComponent implements OnInit {
   user: User;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private jwtHelper: JwtHelperService) {
     this.user = null;
   }
 
@@ -28,8 +29,9 @@ export class HeaderComponent implements OnInit {
 
   checkLoggedStatus() {
     const token = localStorage.getItem('token');
-
-    this.user = token ? jwtDecode(token) : null;
+    if (token) {
+      this.user = this.jwtHelper.decodeToken(token);
+    }
   }
 
   logout() {

@@ -106,6 +106,7 @@ export class TasksComponent implements OnInit {
         next: (res) => {
           console.log(res.message);
           this.fetchTasks();
+          this.taskForm.reset();
         },
         error: (error) => {
           console.error(error);
